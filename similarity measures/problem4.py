@@ -9,12 +9,12 @@ ratings, movie_dictionary, user_ids, item_ids, movie_names = reader.read_movie_l
 
 # calculate Jaccard coefficient for two movie ID's
 # (nr. of users who rated both movies / nr. of users who rated at least one of them)
-def jaccard_coefficient(movie1, movie2):
-    rated_movie1 = [movie[0] for movie in ratings if movie[1] == movie1]
-    rated_movie2 = [movie[0] for movie in ratings if movie[1] == movie2]
-    rated_both = len(set(rated_movie1).intersection(rated_movie2))
-    rated_either = len(set(rated_movie1 + rated_movie2))
-    return rated_both / rated_either
+def jaccard_coefficient(movie_id_1, movie_id_2):
+    rated_movie1 = ratings[ratings[:, 1] == movie_id_1][:, 0]
+    rated_movie2 = ratings[ratings[:, 1] == movie_id_2][:, 0]
+    rated_either = len(set(np.concatenate((rated_movie1, rated_movie2), axis=0)))
+    rated_both = len(np.intersect1d(rated_movie1, rated_movie2))
+    return round(rated_both / rated_either, 3)
 
 # name of a movie from movie id
 def name(movie_id):
@@ -36,11 +36,11 @@ print("Jaccard coefficient for ", name(59), " & ", name(60), ": ", jaccard_coeff
 
 # print the five movies with highest Jaccard coefficient with Taxi Driver
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
-# print("five top Jaccard coefficient movies for Taxi Driver: ", jaccard_coefficient_top_5(23))
+print("five top Jaccard coefficient movies for Taxi Driver: ", jaccard_coefficient_top_5(23))
 
 # print the five movies with highest Jaccard coefficient with Star Trek: the Wrath of Khan
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
-# print("five top Jaccard coefficient movies for Star Trek: the Wrath of Khan: ", jaccard_coefficient_top_5(228))
+print("five top Jaccard coefficient movies for Star Trek: the Wrath of Khan: ", jaccard_coefficient_top_5(228))
 
 # C part #
 
@@ -91,8 +91,8 @@ print("correlation for ", name(59), " & ", name(60), ": ", pearson_correlation(5
 
 # print the five movies with highest correlation with Taxi Driver
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
-print("five top correlation movies for Taxi Driver: ", pearson_correlation_top5(23))
+#print("five top correlation movies for Taxi Driver: ", pearson_correlation_top5(23))
 
 # print the five movies with highest correlation with Star Trek: the Wrath of Khan
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
-print("five top correlation movies for Star Trek: the Wrath of Khan: ", pearson_correlation_top5(228))
+#print("five top correlation movies for Star Trek: the Wrath of Khan: ", pearson_correlation_top5(228))
