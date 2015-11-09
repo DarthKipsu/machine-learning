@@ -2,6 +2,7 @@ import mnist_load_show as mnist
 import numpy as np
 
 from scipy.spatial.distance import cdist
+from sklearn.metrics import confusion_matrix
 
 # Load the first 5000 images from mnist.
 X, y = mnist.read_mnist_training_data(5000)
@@ -22,8 +23,24 @@ training_labels, test_labels = np.array_split(y, 2)
 #print(test_labels[0:12])
 #mnist.visualize(test_data[0:12])
 
-def prototype(digit):
-    digits = training_data[training_labels == digit]
+def prototype(label):
+    """
+    Creates a prototype image of the training set images with a given label.
+    """
+    digits = training_data[training_labels == label]
     return np.array(np.mean(digits, axis=0, dtype=np.int32))
 
-mnist.visualize(prototype(4))
+prototypes = np.array([prototype(n) for n in range(0,10)])
+#mnist.visualize(prototypes)
+
+def simple_EC_classifier():
+    """
+    Implement the classifier based on the Euclidean distance
+    :return: the confusing matrix obtained regarding the result obtained using simple Euclidean distance method
+    """
+    predictions = np.array([np.argmin(dist) for dist in cdist(test_data, prototypes)])
+    simple_EC_conf_martix = confusion_matrix(test_labels, predictions)
+    return simple_EC_conf_martix
+
+print(simple_EC_classifier())
+
