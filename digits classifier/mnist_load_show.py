@@ -33,8 +33,8 @@ def visualize(image):
         image = np.array([image])
     cols = int(np.ceil(np.sqrt(image.shape[0])))
     img_number = 0
-    for row in xrange(0, cols):
-        for col in xrange(0, cols):
+    for row in range(0, cols):
+        for col in range(0, cols):
             if img_number > image.shape[0] - 1:
                 break
             else:
