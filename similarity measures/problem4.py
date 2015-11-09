@@ -13,7 +13,7 @@ def jaccard_coefficient(movie_id_1, movie_id_2):
     rated_movie1 = ratings[ratings[:, 1] == movie_id_1][:, 0]
     rated_movie2 = ratings[ratings[:, 1] == movie_id_2][:, 0]
     rated_either = len(set(np.concatenate((rated_movie1, rated_movie2), axis=0)))
-    rated_both = len(np.intersect1d(rated_movie1, rated_movie2))
+    rated_both = len(np.intersect1d(rated_movie1, rated_movie2, True))
     return round(rated_both / rated_either, 3)
 
 # name of a movie from movie id
@@ -34,6 +34,8 @@ print("Jaccard coefficient for ", name(1), " & ", name(2), ": ", jaccard_coeffic
 # Print Jaccard coefficient for 'Three Colors: Red' and 'Three Colors: Blue'
 print("Jaccard coefficient for ", name(59), " & ", name(60), ": ", jaccard_coefficient(59, 60))
 
+print()
+
 # print the five movies with highest Jaccard coefficient with Taxi Driver
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
 print("five top Jaccard coefficient movies for Taxi Driver: ", jaccard_coefficient_top_5(23))
@@ -42,30 +44,35 @@ print("five top Jaccard coefficient movies for Taxi Driver: ", jaccard_coefficie
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
 print("five top Jaccard coefficient movies for Star Trek: the Wrath of Khan: ", jaccard_coefficient_top_5(228))
 
+print()
+print("---------------------------")
+print()
+
 # C part #
 
 # calculate similarity measure using the ratings made by users who have rated both movies
-def pearson_correlation(movie1, movie2):
-    rated_movie1 = [rating[0] for rating in ratings if rating[1] == movie1]
-    rated_movie2 = [rating[0] for rating in ratings if rating[1] == movie2]
-    rated_both = set(rated_movie1).intersection(rated_movie2)
-    if len(rated_both) < 20:
+def pearson_correlation(movie_id_1, movie_id_2):
+    rated_movie1 = ratings[ratings[:, 1] == movie_id_1]
+    rated_movie2 = ratings[ratings[:, 1] == movie_id_2]
+    rated_both = np.intersect1d(rated_movie1[:, 0], rated_movie2[:, 0], True)
+
+    if len(rated_both) < 15:
         return 0
 
-    ratings_movie1 = [rating[2] for rating in ratings if rating[1] == movie1 and rating[0] in rated_both]
-    ratings_movie2 = [rating[2] for rating in ratings if rating[1] == movie2 and rating[0] in rated_both]
-    mean1 = np.mean(ratings_movie1)
-    mean2 = np.mean(ratings_movie2)
+    ratings_movie1 = rated_movie1[np.in1d(rated_movie1[:, 0], rated_both), :]
+    ratings_movie2 = rated_movie2[np.in1d(rated_movie2[:, 0], rated_both), :]
+    sorted_movie1 = ratings_movie1[np.lexsort((ratings_movie1[:, 0], ))][:, [0, 2]]
+    sorted_movie2 = ratings_movie2[np.lexsort((ratings_movie2[:, 0], ))][:, [0, 2]]
 
-    #print(sorted(ratings_movie1))
-    #print(sorted(ratings_movie2))
+    mean1 = np.mean(ratings_movie1[:, 2])
+    mean2 = np.mean(ratings_movie2[:, 2])
 
     numerator = 0
     denomX = 0
     denomY = 0
-    for i in range(len(rated_both)):
-        x = ratings_movie1[i] - mean1
-        y = ratings_movie2[i] - mean2
+    for i in range(len(sorted_movie1)):
+        x = sorted_movie1[i][1] - mean1
+        y = sorted_movie2[i][1] - mean2
         numerator += x * y
         denomX += x * x
         denomY += y * y
@@ -73,7 +80,7 @@ def pearson_correlation(movie1, movie2):
     if (denomX == 0 or denomY == 0):
         return 0
 
-    return numerator / m.sqrt(denomX * denomY)
+    return round(numerator / m.sqrt(denomX * denomY), 3)
 
 # 5 movies with the highest correlation for a movie id
 def pearson_correlation_top5(movie_id):
@@ -89,10 +96,12 @@ print("Correlation for ", name(1), " & ", name(2), ": ", pearson_correlation(1, 
 # Print correlation for 'Three Colors: Red' and 'Three Colors: Blue'
 print("correlation for ", name(59), " & ", name(60), ": ", pearson_correlation(59, 60))
 
+print()
+
 # print the five movies with highest correlation with Taxi Driver
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
-#print("five top correlation movies for Taxi Driver: ", pearson_correlation_top5(23))
+print("five top correlation movies for Taxi Driver: ", pearson_correlation_top5(23))
 
 # print the five movies with highest correlation with Star Trek: the Wrath of Khan
 # this opearation is expensive and can take a few minutes, so uncomment only if you need the result.
-#print("five top correlation movies for Star Trek: the Wrath of Khan: ", pearson_correlation_top5(228))
+print("five top correlation movies for Star Trek: the Wrath of Khan: ", pearson_correlation_top5(228))
