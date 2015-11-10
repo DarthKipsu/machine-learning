@@ -42,5 +42,19 @@ def simple_EC_classifier():
     simple_EC_conf_martix = confusion_matrix(test_labels, predictions)
     return simple_EC_conf_martix
 
+def KNN():
+    """
+    Implement the classifier using KNN and return the confusion matrix
+    :return: the confusion matrix regarding the result obtained using knn method
+    """
+    predictions = np.array([training_labels[np.argmin(dist)] for dist in cdist(test_data, training_data)])
+    knn_conf_matrix = confusion_matrix(test_labels, predictions)
+    return knn_conf_matrix
+
 print(simple_EC_classifier())
+print("-------------------")
+print(KNN())
+print("-------------------")
+print("correct predictions with simple EC classifier: ", np.sum(np.diagonal(simple_EC_classifier())))
+print("correct predictions with KNN classifier: ", np.sum(np.diagonal(KNN())))
 
