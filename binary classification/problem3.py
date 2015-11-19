@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 # Analytically computed optimal Bayes classifier
-boundary = 1.71972
+boundary = 2.9574
 
 # Generate 10k samples, classify with the classifier above and compute error rate.
 errors = 0
