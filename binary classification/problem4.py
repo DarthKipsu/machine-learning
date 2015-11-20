@@ -7,25 +7,6 @@ import numpy as np
 boundary = 64 * math.log(2) / 15
 
 '''
-Generate 10k samples, classify with the boundary above and compute error rate.
-'''
-boundary_errors = 0
-#boundary_labels = np.random.randint(2, size=10000)
-#boundary_x1 = draw_datapoints(boundary_labels)
-#boundary_x2 = draw_datapoints(boundary_labels)
-
-for y in np.random.randint(2, size=10000):
-    if y == 0:
-        x1, x2 = np.random.normal(0, 1, 2)
-        if math.sqrt(x1*x1 + x2*x2) > boundary: # would classify as y = 1
-            boundary_errors += 1
-    else:
-        x1, x2 = np.random.normal(0, 4, 2)
-        if math.sqrt(x1*x1 + x2*x2) <= boundary: # would classify as y = 0
-            boundary_errors += 1
-boundary_errors /= 10000.0
-
-'''
 create random data points from the given list of distributions
 '''
 def draw_datapoints(labels):
@@ -33,6 +14,16 @@ def draw_datapoints(labels):
     data[labels == 0] = np.random.normal(0, 1, len(labels[labels == 0]))
     data[labels == 1] = np.random.normal(0, 4, len(labels[labels == 1]))
     return data
+
+'''
+Generate 10k samples, classify with the boundary above and compute error rate.
+'''
+boundary_labels = np.random.randint(2, size=10000)
+boundary_x1 = draw_datapoints(boundary_labels)
+boundary_x2 = draw_datapoints(boundary_labels)
+boundary_errors_y0 = boundary_x1[(boundary_labels==0) & (boundary_x1 * boundary_x1 + boundary_x2 * boundary_x2 > math.pow(boundary, 2))]
+boundary_errors_y1 = boundary_x1[(boundary_labels==1) & (boundary_x1 * boundary_x1 + boundary_x2 * boundary_x2 <= math.pow(boundary, 2))]
+boundary_errors = (len(boundary_errors_y0) + len(boundary_errors_y1)) / 10000.0
 
 '''
 Create training set with 500 items and print a scatterplot of them
