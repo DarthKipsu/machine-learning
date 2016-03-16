@@ -27,7 +27,7 @@ centers are the first 10 digits.
 means, cluster = k_means(X, X[:10])
 #mnist.visualize(means)
 #for i in range(10):
-#    mnist.visualize(X[cluster==i])
+#    mnist.visualize(np.concatenate((np.array([means[i]]), X[cluster==i]), axis=0))
 
 '''
 Print cluster means and assignments for cluster for each digit when original cluster
@@ -36,7 +36,7 @@ centers are the first instances of each 10 digits.
 means, cluster = k_means(X, np.array([X[np.argmax(y==i)] for i in range(10)]))
 #mnist.visualize(means)
 #for i in range(10):
-#    mnist.visualize(X[cluster==i])
+#    mnist.visualize(np.concatenate((np.array([means[i]]), X[cluster==i]), axis=0))
 
 def k_medoids(distances, medoids):
     '''
@@ -63,7 +63,7 @@ centers are the first 10 digits.
 medoids, cluster = k_medoids(cdist(X, X, 'euclidean'), range(10))
 #mnist.visualize(np.array([X[medoid] for medoid in medoids]))
 #for i in range(len(medoids)):
-#    mnist.visualize(X[cluster==i])
+#    mnist.visualize(np.concatenate((np.array([X[medoids[i]]]), X[cluster==i]), axis=0))
 
 '''
 Print cluster medoids and assignments for cluster for each digit when original cluster
@@ -72,4 +72,4 @@ centers are the first instances of each 10 digits.
 medoids, cluster = k_medoids(cdist(X, X, 'euclidean'), np.array([np.argmax(y==i) for i in range(10)]))
 #mnist.visualize(np.array([X[medoid] for medoid in medoids]))
 #for i in range(len(medoids)):
-#    mnist.visualize(X[cluster==i])
+#    mnist.visualize(np.concatenate((np.array([X[medoids[i]]]), X[cluster==i]), axis=0))
